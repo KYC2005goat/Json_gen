@@ -1,0 +1,17 @@
+body {
+    background-color: #f8f9fa;
+    font-family: 'Arial', sans-serif;
+}
+
+.card {
+    border-radius: 10px;
+    background: white;
+}
+
+.preview {
+    max-width: 120px;
+    display: block;
+    border-radius: 5px;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+    display: none;
+}
