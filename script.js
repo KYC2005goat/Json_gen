@@ -1,31 +1,38 @@
-function previewImage(input, previewId) {
-    if (input.files && input.files[0]) {
-        var reader = new FileReader();
-        reader.onload = function(e) {
-            document.getElementById(previewId).src = e.target.result;
-            document.getElementById(previewId).style.display = "block";
-        };
-        reader.readAsDataURL(input.files[0]);
-    }
+// Load product count from localStorage or start from 1
+let productCount = localStorage.getItem("productCount") ? parseInt(localStorage.getItem("productCount")) : 1;
+
+function generateUniqueId() {
+    return Date.now() + Math.floor(Math.random() * 1000); // Unique ID
 }
 
-document.getElementById("mainImage").addEventListener("change", function() { previewImage(this, "mainPreview"); });
-document.getElementById("image1").addEventListener("change", function() { previewImage(this, "preview1"); });
-document.getElementById("image2").addEventListener("change", function() { previewImage(this, "preview2"); });
-document.getElementById("image3").addEventListener("change", function() { previewImage(this, "preview3"); });
+function generateImageName() {
+    let imageName = `product${productCount}.jpg`;
+    productCount++; // Increment count
+    localStorage.setItem("productCount", productCount); // Save updated count
+    return imageName;
+}
+
+function getImagePath(input) {
+    if (input.files.length > 0) {
+        return "uploads/" + generateImageName(); // Generate unique filename
+    }
+    return null;
+}
 
 function generateJSON() {
-    var name = document.getElementById("name").value;
-    var price = document.getElementById("price").value;
-    var description = document.getElementById("description").value;
-    var mainImage = document.getElementById("mainPreview").src;
-    var images = [
-        document.getElementById("preview1").src,
-        document.getElementById("preview2").src,
-        document.getElementById("preview3").src
-    ].filter(src => src !== ""); 
+    let name = document.getElementById("name").value;
+    let price = document.getElementById("price").value;
+    let description = document.getElementById("description").value;
+    
+    let mainImage = getImagePath(document.getElementById("mainImage"));
+    let images = [
+        getImagePath(document.getElementById("image1")),
+        getImagePath(document.getElementById("image2")),
+        getImagePath(document.getElementById("image3"))
+    ].filter(img => img !== null);
 
-    var productData = {
+    let productData = {
+        id: generateUniqueId(),
         name: name,
         price: price,
         description: description,
@@ -38,7 +45,7 @@ function generateJSON() {
 }
 
 function downloadJSON() {
-    var jsonData = generateJSON();
-    var blob = new Blob([JSON.stringify(jsonData, null, 4)], { type: "application/json" });
+    let jsonData = generateJSON();
+    let blob = new Blob([JSON.stringify(jsonData, null, 4)], { type: "application/json" });
     saveAs(blob, "product.json");
 }
